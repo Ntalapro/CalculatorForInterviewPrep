@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Calculator";
+}
+
+<h2>Calculator</h2>
+
+<!-- Calculator Screen -->
+<input type="text" id="screen" class="form-control text-end fs-4" disabled placeholder="0">
+
+<!-- Hidden form for submission -->
+<form id="calculatorForm" asp-action="Calculate" method="post">
+    <input type="hidden" id="operation" name="operation">
+    <input type="hidden" id="operand1" name="operand1">
+    <input type="hidden" id="operand2" name="operand2">
+</form>
+
+<!-- Calculator Grid -->
+<div class="row mt-2">
+    <div class="col-3"><button class="btn btn-primary w-100" onclick="appendToScreen('1')">1</button></div>
+    <div class="col-3"><button class="btn btn-primary w-100" onclick="appendToScreen('2')">2</button></div>
+    <div class="col-3"><button class="btn btn-primary w-100" onclick="appendToScreen('3')">3</button></div>
+    <div class="col-3"><button class="btn btn-warning w-100 operation-btn" onclick="appendOperation('+', 'add')">+</button></div>
+</div>
+<div class="row mt-2">
+    <div class="col-3"><button class="btn btn-primary w-100" onclick="appendToScreen('4')">4</button></div>
+    <div class="col-3"><button class="btn btn-primary w-100" onclick="appendToScreen('5')">5</button></div>
+    <div class="col-3"><button class="btn btn-primary w-100" onclick="appendToScreen('6')">6</button></div>
+    <div class="col-3"><button class="btn btn-warning w-100 operation-btn" onclick="appendOperation('-', 'subtract')">-</button></div>
+</div>
+<div class="row mt-2">
+    <div class="col-3"><button class="btn btn-primary w-100" onclick="appendToScreen('7')">7</button></div>
+    <div class="col-3"><button class="btn btn-primary w-100" onclick="appendToScreen('8')">8</button></div>
+    <div class="col-3"><button class="btn btn-primary w-100" onclick="appendToScreen('9')">9</button></div>
+    <div class="col-3"><button class="btn btn-warning w-100 operation-btn" onclick="appendOperation('*', 'multiply')">*</button></div>
+</div>
+<div class="row mt-2">
+    <div class="col-3"><button class="btn btn-primary w-100" onclick="appendToScreen('0')">0</button></div>
+    <div class="col-3"><button class="btn btn-danger w-100" onclick="clearScreen()">C</button></div>
+    <div class="col-3"><button class="btn btn-success w-100" onclick="submitCalculation()">=</button></div>
+    <div class="col-3"><button class="btn btn-warning w-100 operation-btn" onclick="appendOperation('/', 'divide')">/</button></div>
+</div>
+
+<script>
+    let hasOperator = false; 
+    let selectedOperation = "";
+
+    function appendToScreen(value) {
+        const screen = document.getElementById('screen');
+        screen.value += value;
+    }
+
+    function appendOperation(symbol, operationName) {
+        const screen = document.getElementById('screen');
+        let currentValue = screen.value;
+
+        if (hasOperator || currentValue.length === 0) return;
+
+        hasOperator = true;
+        selectedOperation = operationName;
+        screen.value += symbol;
+    }
+
+    function clearScreen() {
+        document.getElementById('screen').value = '';
+        hasOperator = false;
+        selectedOperation = "";
+    }
+
+    function submitCalculation() {
+        let expression = document.getElementById('screen').value;
+        let regex = /^(\d{1,5})([\+\-\*\/])(\d{1,5})$/;
+        let match = expression.match(regex);
+
+        if (!match || !hasOperator) {
+            alert("Invalid input! Ensure the two numbers are within 5 digits.");
+            return;
+        }
+
+        document.getElementById('operand1').value = match[1];
+        document.getElementById('operand2').value = match[3];
+        document.getElementById('operation').value = selectedOperation;
+
+        document.getElementById('calculatorForm').submit();
+    }
+</script>
