@@ -2,7 +2,10 @@
     ViewData["Title"] = "Calculator";
 }
 
-<h2>Calculator</h2>
+<div class="d-flex gap-3 justify-content-center align-items-center w-100 mb-3 mt-5">
+    <h2>Calculator</h2>
+    <h6 class="text-muted">e.g. 12345 + 12345</h6>
+</div>
 
 <!-- Calculator Screen -->
 <input type="text" id="screen" class="form-control text-end fs-4" disabled placeholder="0">
@@ -39,6 +42,72 @@
     <div class="col-3"><button class="btn btn-success w-100" onclick="submitCalculation()">=</button></div>
     <div class="col-3"><button class="btn btn-warning w-100 operation-btn" onclick="appendOperation('/', 'divide')">/</button></div>
 </div>
+
+<!-- Calculation History -->
+<div class="mt-5">
+    <h3>Calculation History</h3>
+
+    <div class="row">
+        <!-- Positive Results -->
+        <div class="col-md-4">
+            <h5 class="text-success">Positive Results</h5>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>Expression</th><th>Result</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var calculation in (ViewData["PositiveResults"] as List<Calculation>) ?? new List<Calculation>())
+                    {
+                        <tr>
+                            <td>@calculation.Expression</td>
+                            <td>@calculation.Result</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Negative Results -->
+        <div class="col-md-4">
+            <h5 class="text-danger">Negative Results</h5>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>Expression</th><th>Result</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var calculation in (ViewData["NegativeResults"] as List<Calculation>) ?? new List<Calculation>())
+                    {
+                        <tr>
+                            <td>@calculation.Expression</td>
+                            <td>@calculation.Result</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Zero Results -->
+        <div class="col-md-4">
+            <h5 class="text-warning">Zero Results</h5>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>Expression</th><th>Result</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var calculation in (ViewData["ZeroResults"] as List<Calculation>) ?? new List<Calculation>())
+                    {
+                        <tr>
+                            <td>@calculation.Expression</td>
+                            <td>@calculation.Result</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
 
 <script>
     let hasOperator = false; 

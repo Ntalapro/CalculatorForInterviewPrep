@@ -6,5 +6,6 @@ namespace CalculatorForInterviewPrep.Repositories
     {
         Task AddAsync(Calculation calculation);
         Task<List<Calculation>> GetAllAsync();
+
     }
 }

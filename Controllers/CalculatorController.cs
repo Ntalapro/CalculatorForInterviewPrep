@@ -18,8 +18,19 @@ namespace CalculatorForInterviewPrep.Controllers
         }
 
         // GET: /Calculator/Index
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var positiveResults = await  _calculatorService.GetPositiveResultsAsync();
+            var negativeResults = await _calculatorService.GetNegativeResultsAsync(); ;
+            var zeroResults = await _calculatorService.GetZeroResultsAsync();
+
+            ViewData["PositiveResults"] = positiveResults;
+            ViewData["NegativeResults"] = negativeResults;
+            ViewData["ZeroResults"] = zeroResults;
+            Console.WriteLine("positive - "+ positiveResults);
+            Console.WriteLine("negative - " + negativeResults);
+            Console.WriteLine("zero - " + zeroResults);
+
             return View();
         }
 

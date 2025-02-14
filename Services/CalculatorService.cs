@@ -32,6 +32,24 @@ namespace CalculatorForInterviewPrep.Services
         {
             return await _calculationRepository.GetAllAsync();
         }
+
+        public async Task<List<Calculation>> GetPositiveResultsAsync()
+        {
+            var calculations = await _calculationRepository.GetAllAsync();
+            return calculations.Where(c => c.Result > 0).ToList();
+        }
+
+        public async Task<List<Calculation>> GetNegativeResultsAsync()
+        {
+            var calculations = await _calculationRepository.GetAllAsync();
+            return calculations.Where(c => c.Result < 0).ToList();
+        }
+
+        public async Task<List<Calculation>> GetZeroResultsAsync()
+        {
+            var calculations = await _calculationRepository.GetAllAsync();
+            return calculations.Where(c => c.Result == 0).ToList();
+        }
     }
 
 }
