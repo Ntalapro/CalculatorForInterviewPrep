@@ -2,7 +2,7 @@
 {
     public class Division : CalculationOperation
     {
-        public override double Execute(double operand1, double operand2)
+        public override double Calculate(double operand1, double operand2)
         {
             if (operand2 == 0)
             {

@@ -1,10 +1,15 @@
 using CalculatorForInterviewPrep.Services;
 using CalculatorForInterviewPrep.Repositories;
+using CalculatorForInterviewPrep.Models.Services;
+using CalculatorForInterviewPrep.Models.Operations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Register services with DI container
 builder.Services.AddSingleton<ICalculationRepository, CalculationRepository>();
-builder.Services.AddSingleton<CalculatorService>();
+builder.Services.AddSingleton<ICalculatorService,CalculatorService>();
+builder.Services.AddSingleton<IFilteredResultsDisplayService, FilteredResultsDisplayService>();
+builder.Services.AddSingleton<IOperationFactory, OperationFactory>();
 
 // Add controllers with views
 builder.Services.AddControllersWithViews();

@@ -1,4 +1,4 @@
-﻿namespace CalculatorForInterviewPrep.Models
+﻿namespace CalculatorForInterviewPrep.Models.CalculationDataModel
 {
     public class Calculation
     {

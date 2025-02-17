@@ -5,31 +5,48 @@ using System;
 using CalculatorForInterviewPrep.Services;
 using CalculatorForInterviewPrep.Operations;
 using CalculatorForInterviewPrep.Repositories;
+using CalculatorForInterviewPrep.Models.Services;
+using CalculatorForInterviewPrep.Models.Operations;
 
 namespace CalculatorForInterviewPrep.Controllers
 {
     public class CalculatorController : Controller
     {
-        private readonly CalculatorService _calculatorService;
+        private readonly ICalculatorService _calculatorService;
+        private readonly ILogger<CalculatorController> _logger;
+        private readonly IFilteredResultsDisplayService _filteredResultsDisplayService;
+        private readonly IOperationFactory _operationFactory;
 
-        public CalculatorController(CalculatorService calculatorService)
+        public CalculatorController(ICalculatorService calculatorService, ILogger<CalculatorController> logger
+                                    , IFilteredResultsDisplayService filteredResultsDisplayService, IOperationFactory operationFactory)
         {
             _calculatorService = calculatorService;
+            _logger = logger;
+            _filteredResultsDisplayService = filteredResultsDisplayService;
+            _operationFactory = operationFactory;
         }
 
         // GET: /Calculator/Index
         public async Task<IActionResult> Index()
         {
-            var positiveResults = await  _calculatorService.GetPositiveResultsAsync();
-            var negativeResults = await _calculatorService.GetNegativeResultsAsync(); ;
-            var zeroResults = await _calculatorService.GetZeroResultsAsync();
+            try
+            {
+                _logger.LogInformation($"Index(Action) -> Calculation results view, running filter methods");
+                var positiveResults = await _filteredResultsDisplayService.GetPositiveResultsAsync();
+                var negativeResults = await _filteredResultsDisplayService.GetNegativeResultsAsync(); ;
+                var zeroResults = await _filteredResultsDisplayService.GetZeroResultsAsync();
 
-            ViewData["PositiveResults"] = positiveResults;
-            ViewData["NegativeResults"] = negativeResults;
-            ViewData["ZeroResults"] = zeroResults;
-            Console.WriteLine("positive - "+ positiveResults);
-            Console.WriteLine("negative - " + negativeResults);
-            Console.WriteLine("zero - " + zeroResults);
+                ViewData["PositiveResults"] = positiveResults;
+                ViewData["NegativeResults"] = negativeResults;
+                ViewData["ZeroResults"] = zeroResults;
+                _logger.LogInformation($"Index(Action) -> Filtered results displayed");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Index(Action) -> Filter display error: {ex.Message}");
+                ViewData["Error"] = ex.Message;
+                return View("Error");
+            }
 
             return View();
         }
@@ -40,22 +57,15 @@ namespace CalculatorForInterviewPrep.Controllers
         {
             try
             {
-                // using PATTERN MATCHING - switch expression
-                CalculationOperation calculation = operation.ToLower() switch
-                {
-                    "add" => new Addition(),
-                    "subtract" => new Subtraction(),
-                    "multiply" => new Multiplication(),
-                    "divide" => new Division(),
-                    _ => throw new ArgumentException("Invalid operation")
-                };
+                _logger.LogInformation($"Calculate(Action) -> Calculation requested: {operand1} {operation} {operand2}");
 
-                double result = await _calculatorService.PerformCalculationAsync(calculation, operand1, operand2);
+                double result = await _calculatorService.PerformCalculationAsync(_operationFactory.GetCalculationStratey(operation), operand1, operand2);
 
                 return View("Result", result);
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Calculate(Action) -> Calculation error: {ex.Message}");
                 ViewData["Error"] = ex.Message;
                 return View("Error");
             }

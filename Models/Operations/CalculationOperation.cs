@@ -2,6 +2,6 @@
 {
     public abstract class CalculationOperation
     {
-        public abstract double Execute(double operand1, double operand2);
+        public abstract double Calculate(double operand1, double operand2);
     }
 }
