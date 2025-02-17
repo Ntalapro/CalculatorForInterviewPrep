@@ -1,25 +1,31 @@
 ﻿using CalculatorForInterviewPrep.Models.CalculationDataModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace CalculatorForInterviewPrep.Repositories
 {
     public class CalculationRepository : ICalculationRepository
     {
-        private readonly List<Calculation> _calculations = new List<Calculation>();
+        private readonly ApplicationDbContext _context;
+
+        public CalculationRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         public async Task AddAsync(Calculation calculation)
         {
-            _calculations.Add(calculation);
-            await Task.CompletedTask;
+            _context.Calculations.Add(calculation);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Calculation>> GetAllAsync() => await Task.FromResult(_calculations);
+        public async Task<List<Calculation>> GetAllAsync() => await _context.Calculations.ToListAsync();
         public async Task<List<Calculation>> GetPositiveResultsAsync() =>
-            await Task.FromResult(_calculations.Where(c => c.Result > 0).ToList());
+            await _context.Calculations.Where(c => c.Result > 0).ToListAsync();
 
         public async Task<List<Calculation>> GetNegativeResultsAsync() =>
-            await Task.FromResult(_calculations.Where(c => c.Result < 0).ToList());
+            await _context.Calculations.Where(c => c.Result < 0).ToListAsync();
 
         public async Task<List<Calculation>> GetZeroResultsAsync() =>
-            await Task.FromResult(_calculations.Where(c => c.Result == 0).ToList());
+            await _context.Calculations.Where(c => c.Result == 0).ToListAsync();
     }
 }

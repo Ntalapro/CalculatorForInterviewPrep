@@ -2,14 +2,21 @@ using CalculatorForInterviewPrep.Services;
 using CalculatorForInterviewPrep.Repositories;
 using CalculatorForInterviewPrep.Models.Services;
 using CalculatorForInterviewPrep.Models.Operations;
+using CalculatorForInterviewPrep.Models.CalculationDataModel;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Configure Entity Framework with In-Memory Database
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseInMemoryDatabase("CalculatorDb"));
+
 // Register services with DI container
-builder.Services.AddSingleton<ICalculationRepository, CalculationRepository>();
-builder.Services.AddSingleton<ICalculatorService,CalculatorService>();
-builder.Services.AddSingleton<IFilteredResultsDisplayService, FilteredResultsDisplayService>();
-builder.Services.AddSingleton<IOperationFactory, OperationFactory>();
+builder.Services.AddScoped<ICalculationRepository, CalculationRepository>();
+builder.Services.AddScoped<ICalculatorService,CalculatorService>();
+builder.Services.AddScoped<IFilteredResultsDisplayService, FilteredResultsDisplayService>();
+builder.Services.AddScoped<IOperationFactory, OperationFactory>();
 
 // Add controllers with views
 builder.Services.AddControllersWithViews();
